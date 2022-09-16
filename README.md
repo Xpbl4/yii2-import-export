@@ -1,6 +1,6 @@
-# yii2-importexport
+# yii2-import-export
 
-Extension for the Yii2 framework for importing and exporting data with [PHPExcel].
+Extension for the Yii2 framework for importing and exporting data with [PhpSpreadsheet].
 
 ## Installation
 
@@ -8,11 +8,11 @@ The preferred way to install this extension is through [composer](http://getcomp
 
 Either run
 
-    php composer.phar require --prefer-dist boundstate/yii2-importexport "*"
+    php composer.phar require --prefer-dist xpbl4/yii2-import-export "*"
 
 or add
 
-    "boundstate/yii2-importexport": "*"
+    "xpbl4/yii2-import-export": "*"
 
 to the require section of your `composer.json` file.
 
