@@ -23,11 +23,16 @@
     "source": "https://github.com/Xpbl4/yii2-import-export"
   },
   "require": {
-    "phpoffice/phpexcel": "~1.8"
+    "phpoffice/phpspreadsheet": "*"
   },
   "autoload": {
     "psr-4": {
       "xpbl4\\import\\": "src"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0.x-dev"
     }
   }
 }

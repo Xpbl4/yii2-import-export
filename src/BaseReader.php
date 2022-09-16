@@ -9,9 +9,9 @@ namespace xpbl4\import;
 abstract class BaseReader extends \yii\base\BaseObject
 {
 	/**
-	 * @var ImportInterface|string importer instance or class name
+	 * @var ImportInterface|\yii\db\ActiveRecord|string importer instance or class name
 	 */
-	public $destination;
+	public $model;
 
 	/**
 	 * @var array data
@@ -28,11 +28,11 @@ abstract class BaseReader extends \yii\base\BaseObject
 	 */
 	public function init()
 	{
-		if (!$this->destination) {
-			throw new \yii\base\InvalidConfigException('The "destination" property must be set.');
+		if (!$this->model) {
+			throw new \yii\base\InvalidConfigException('The "model" property must be set.');
 		}
-		if (is_string($this->destination)) {
-			$this->destination = new $this->destination;
+		if (is_string($this->model)) {
+			$this->model = new $this->model;
 		}
 	}
 
@@ -47,11 +47,26 @@ abstract class BaseReader extends \yii\base\BaseObject
 	}
 
 	/**
-	 * @return array row errors
+	 * @return array errors
 	 */
 	public function getErrors()
 	{
 		return $this->_errors;
+	}
+
+	/**
+	 * @param $row integer
+	 * @return array row errors
+	 */
+	public function getError($row)
+	{
+		$_result = [];
+		$_errors = $this->getErrors();
+		foreach ($_errors as $_error) {
+			if ($_error['row'] == $row) $_result[] = $_error['message'];
+		}
+
+		return !empty($_result) ? $_result : null;
 	}
 
 	/**
@@ -65,7 +80,7 @@ abstract class BaseReader extends \yii\base\BaseObject
 		$this->read($filename);
 
 		foreach ($this->rows as $i => $row) {
-			if (!$this->destination->import($this, $i, $row)) {
+			if (!$this->model->import($this, $i, $row)) {
 				return false;
 			}
 		}
