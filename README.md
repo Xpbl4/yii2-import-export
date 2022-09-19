@@ -45,7 +45,7 @@ Implement the `ImportInterface` and/or `ExportInterface`:
         }
     }
 
-Now you can import data using `ExcelReader` and your class as the `destination`:
+Now you can import data using `ExcelReader` and your class as the `model`:
 
     public function actionImport()
     {
@@ -54,7 +54,7 @@ Now you can import data using `ExcelReader` and your class as the `destination`:
 
         if ($form->validate()) {
             Contact::deleteAll();
-            $reader = new ExcelReader(['destination' => Contact::className()]);
+            $reader = new ExcelReader(['model' => Contact::className()]);
             $reader->import($form->file->tempName);
             if ($reader->getErrors()) {
                 // Handle errors
@@ -69,8 +69,8 @@ Or export data using `ExcelWriter` and your class as the `source`:
     public function actionExport()
     {
 		$writer = new ExcelWriter(['source' => Contact::className()]);
-        $filename = $writer->write('Excel2007');
+        $filename = $writer->write('Xlsx');
         Yii::$app->response->sendFile($filename, 'contacts.xlsx')->send();
     }
 
-[PHPExcel]: https://github.com/PHPOffice/PHPExcel
+[PhpSpreadsheet]: https://github.com/PHPOffice/PhpSpreadsheet
