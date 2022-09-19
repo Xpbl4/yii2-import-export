@@ -2,9 +2,8 @@
 
 namespace xpbl4\import;
 
-use PHPExcel;
-use PHPExcel_IOFactory;
-use PHPExcel_Shared_Date;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 
 /**
  * Reads Excel files using PHPExcel.
@@ -18,21 +17,24 @@ class ExcelReader extends BaseReader
 	 */
 	protected function read($filename)
 	{
-		$reader = PHPExcel_IOFactory::createReaderForFile($filename);
-		$xl = $reader->load($filename);
-		/* @var $xl \PHPExcel */
+		/**  Identify the type of $inputFileName  **/
+		$inputFileType = IOFactory::identify($filename);
 
-		$sheet = $xl->getActiveSheet();
+		/**  Create a new Reader of the type that has been identified  **/
+		$reader = IOFactory::createReader($inputFileType);
+
+		$spreadsheet = $reader->load($filename);
+		$worksheet = $spreadsheet->getActiveSheet();
 
 		$this->rows = [];
-		foreach ($sheet->getRowIterator() as $row) {
+		foreach ($worksheet->getRowIterator() as $row) {
 			$dataRow = [];
 			$cellIterator = $row->getCellIterator();
 			$cellIterator->setIterateOnlyExistingCells(false);
 			foreach ($cellIterator as $cell) {
-				if (PHPExcel_Shared_Date::isDateTime($cell)) {
+				if (ExcelDate::isDateTime($cell)) {
 					// Convert Excel representations of dates to yyyy-MM-dd format
-					$dataRow[] = gmdate('Y-m-d', PHPExcel_Shared_Date::ExcelToPHP($cell->getValue()));
+					$dataRow[] = gmdate('Y-m-d', ExcelDate::excelToTimestamp($cell->getValue()));
 				} else {
 					$dataRow[] = $cell->getValue();
 				}
