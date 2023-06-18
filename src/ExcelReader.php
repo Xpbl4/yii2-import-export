@@ -3,10 +3,11 @@
 namespace xpbl4\import;
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Reader\Exception;
 use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 
 /**
- * Reads Excel files using PHPExcel.
+ * Reads Excel files using PhpOffice\PhpSpreadsheet.
  * @package xpbl4\import
  */
 class ExcelReader extends BaseReader
@@ -14,6 +15,8 @@ class ExcelReader extends BaseReader
 	/**
 	 * Reads from an Excel file.
 	 * @param string $filename
+	 *
+	 * @throws Exception
 	 */
 	protected function read($filename)
 	{
