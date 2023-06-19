@@ -10,5 +10,5 @@ interface ImportInterface
 	 * @param integer $row zero-based row number
 	 * @param array $data row data
 	 */
-	public function import($reader, $row, $data);
+	public static function import($reader, $row, $data);
 }

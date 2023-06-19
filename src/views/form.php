@@ -29,10 +29,6 @@ $_labels = $destination->hasMethod('importLabels') ? $destination->importLabels(
 	<?= $form->errorSummary($model); ?>
 
     <?php
-    foreach ($model->headers as $_id => $_header) {
-	    if (!intval($_header['ignore']) && empty($_header['attribute'])) print_r($_header);
-    }
-
     if (!empty($model->result)) {
         $type = 'success';
 	    $message = [];
@@ -73,7 +69,7 @@ $_labels = $destination->hasMethod('importLabels') ? $destination->importLabels(
 	    //$defaultKeys = \common\helpers\DBHelper::valueById($_labels, $destination::primaryKey());
 
 ?>
-
+    <?= $form->field($model, 'process')->hiddenInput(['value' => 1])->label(false); ?>
     <div class="hint">
         <ul>
             <li><strong>Source</strong> - the name of column in imported file</li>
@@ -88,11 +84,11 @@ $_labels = $destination->hasMethod('importLabels') ? $destination->importLabels(
             <thead>
             <tr>
                 <th class="col-sm-5">Source</th>
-                <th class="col-sm-2 text-center" colspan="2"><span class="glyphicon glyphicon-chevron-right"></span></th>
+                <th class="col-sm-2 text-center"><span class="glyphicon glyphicon-chevron-right"></span></th>
                 <th class="col-sm-5">Model</th>
             </tr>
             </thead>
-            <tbody style="height: 150px; overflow: scroll;">
+            <tbody style="max-height: 250px; overflow: scroll;">
             <?php foreach ($model->headers as $_id => $_header): ?>
             <tr<?= empty($_header['attribute']) ? ' class="has-error"' : ''; ?>>
                 <td><label class="control-label" for="headers-<?= $_id; ?>-attribute"><?= $_header['label']; ?></label><?= Html::activeHiddenInput($model, 'headers['.$_id.'][label]'); ?></td>

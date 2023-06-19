@@ -7,8 +7,8 @@
  */
 namespace xpbl4\import\models;
 
-use xpbl4\import\ImportInterface;
 use xpbl4\import\ExcelReader;
+use xpbl4\import\ImportInterface;
 use Yii;
 use yii\base\Model;
 
@@ -77,8 +77,10 @@ class ImportForm extends Model
 					foreach ($dataRow as $value) if (!empty($value)) $emptyRow = false;
 
 					if (!$emptyRow) {
-						if ($model->import($reader, $i, $dataRow)) {
+						if ($imported = $model::import($reader, $i, $dataRow)) {
 							$this->result['complete'][$i] = true;
+							if ($imported->isNewRecord) $this->result['created'][$i] = $imported->id;
+							else $this->result['updated'][$i] = $imported->id;
 						} else {
 							$this->result['error'][$i] = $reader->getError($i);
 						}
@@ -97,7 +99,7 @@ class ImportForm extends Model
 				return true;
 			}
 		} else
-			$this->addError('headers', 'Error on header checking!');
+			$this->addError('headers', 'Error on header checking! Please fill all required fields.');
 
 		return false;
 	}

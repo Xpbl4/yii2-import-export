@@ -10,7 +10,7 @@
     "csv"
   ],
   "homepage": "https://github.com/Xpbl4/yii2-import-export",
-  "license": "MIT",
+  "license": "BSD-3-Clause",
   "authors": [
     {
       "name": "Serge Mashkov",
@@ -22,6 +22,12 @@
     "issues": "https://github.com/Xpbl4/yii2-import-export/issues?state=open",
     "source": "https://github.com/Xpbl4/yii2-import-export"
   },
+  "repositories":[
+    {
+      "type": "git",
+      "url": "https://github.com/Xpbl4/yii2-import-export.git"
+    }
+  ],
   "require": {
     "phpoffice/phpspreadsheet": "*"
   },
