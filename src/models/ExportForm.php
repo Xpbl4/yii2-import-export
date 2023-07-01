@@ -7,25 +7,52 @@
  */
 namespace xpbl4\import\models;
 
-use xpbl4\import\ExcelReader;
-use xpbl4\import\ImportInterface;
+use xpbl4\import\ExcelWriter;
+use xpbl4\import\ExportInterface;
 use Yii;
 use yii\base\Model;
 
 /**
  * ImportForm is the model behind the contact form.
  */
-class ImportForm extends Model
+class ExportForm extends Model
 {
-	public $filename;
+	/** @var string HTML (Hyper Text Markup Language) export format */
+	const FORMAT_HTML = 'html';
+
+	/** @var string CSV (comma separated values) export format */
+	const FORMAT_CSV = 'csv';
+
+	/** @var string Text export format */
+	const FORMAT_TEXT = 'txt';
+
+	/** @var string PDF (Portable Document Format) export format */
+	const FORMAT_PDF = 'pdf';
+
+	/** @var string Microsoft Excel 95+ export format */
+	const FORMAT_EXCEL = 'xls';
+
+	/** @var string Microsoft Excel 2007+ export format */
+	const FORMAT_EXCEL_X = 'xlsx';
+
+	const FORMAT_LIST = [
+		self::FORMAT_EXCEL_X => 'Excel 2007+',
+		self::FORMAT_EXCEL => 'Excel - Microsoft Excel 95+',
+		self::FORMAT_PDF => 'PDF - Portable Document Format',
+		self::FORMAT_CSV => 'CSV - Comma Separated Values',
+		self::FORMAT_TEXT => 'Text - Tab Delimited',
+		self::FORMAT_HTML => 'HTML - Hyper Text Markup Language',
+	];
+
 	public $offset = 0;
-	public $limit = 1000;
-	public $count = 0;
-	public $headers = [];
+	public $limit = 0;
+	public $format = self::FORMAT_EXCEL_X;
+	public $allowedFormats = [self::FORMAT_EXCEL_X, self::FORMAT_PDF];
+	public $columns = [];
 	public $process = 0;
 
 	public $timeout = false;
-	public $result = [];
+	public $result;
 
 	public $_time = [];
 	/**
@@ -35,10 +62,7 @@ class ImportForm extends Model
 	{
 		return [
 			[['offset', 'limit', 'process'], 'integer'],
-			['headers', 'safe'],
-
-			[['filename'], 'required'],
-			[['filename'], 'file', 'skipOnEmpty' => true, 'extensions' => 'csv,xls,xlsx'],
+			['columns', 'safe'],
 		];
 	}
 
@@ -47,22 +71,41 @@ class ImportForm extends Model
 		return [
 			'limit' => Yii::t('app', 'Limit'),
 			'offset' => Yii::t('app', 'Offset'),
-			'filename' => Yii::t('app', 'Import File'),
-			'headers' => Yii::t('app', 'Headers'),
+			'format' => Yii::t('app', 'Export format'),
+			'columns' => Yii::t('app', 'Columns'),
+		];
+	}
+
+	public function getExportFormats()
+	{
+		return array_filter(self::FORMAT_LIST, function($key) {
+			return in_array($key, $this->allowedFormats);
+		}, ARRAY_FILTER_USE_KEY);
+	}
+
+	public function getFieldFormats()
+	{
+		return [
+			'integer' => Yii::t('app', 'Integer'),
+			'float' => Yii::t('app', 'Float'),
+			'string' => Yii::t('app', 'String'),
+			'date' => Yii::t('app', 'Date'),
+			'datetime' => Yii::t('app', 'Datetime'),
+			'time' => Yii::t('app', 'Time'),
+			'boolean' => Yii::t('app', 'Boolean'),
 		];
 	}
 
 	/**
-	 * @param $model ImportInterface importer instance or class name
+	 * @param $model ExportInterface export model
 	 * @param $file
 	 * @return bool|mixed
 	 */
-	public function import($model, $file)
+	public function export($model, $filename)
 	{
 		$max_time = ini_get("max_execution_time");
 
-		$reader = new ExcelReader(['model' => $model]);
-		$reader->load($file);
+		$reader = new ExcelWriter(['source' => $model]);
 
 		$this->count = count($reader->rows);
 		if (empty($this->headers)) $this->headers = $reader->headers();
@@ -77,10 +120,8 @@ class ImportForm extends Model
 					foreach ($dataRow as $value) if (!empty($value)) $emptyRow = false;
 
 					if (!$emptyRow) {
-						if ($imported = $model::import($reader, $i, $dataRow)) {
+						if ($model->import($reader, $i, $dataRow)) {
 							$this->result['complete'][$i] = true;
-							if ($imported->isNewRecord) $this->result['created'][$i] = $imported->id;
-							else $this->result['updated'][$i] = $imported->id;
 						} else {
 							$this->result['error'][$i] = $reader->getError($i);
 						}

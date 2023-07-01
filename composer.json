@@ -29,7 +29,8 @@
     }
   ],
   "require": {
-    "phpoffice/phpspreadsheet": "*"
+    "phpoffice/phpspreadsheet": "*",
+    "xpbl4/yii2-assets": "*"
   },
   "autoload": {
     "psr-4": {

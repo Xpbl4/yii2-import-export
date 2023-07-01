@@ -25,7 +25,6 @@ class ExcelReader extends BaseReader
 	/**
 	 * Imports data via the configured importer.
 	 * @param string $filename
-	 * @return bool|array
 	 */
 	public function load($filename) {
 		$this->read($filename);

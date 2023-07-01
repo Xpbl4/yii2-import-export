@@ -9,9 +9,14 @@ namespace xpbl4\import;
 abstract class BaseWriter extends \yii\base\BaseObject
 {
 	/**
-	 * @var ExportInterface|string exporter instance or class name
+	 * @var ImportInterface|\yii\db\ActiveRecord|string exporter instance or class name
 	 */
 	public $source;
+
+	/**
+	 * @var array options for the exporter
+	 */
+	public $options = [];
 
 	/**
 	 * @inheritdoc

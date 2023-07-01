@@ -18,9 +18,8 @@ use yii\widgets\Pjax;
 
 $_labels = $destination->hasMethod('importLabels') ? $destination->importLabels() : $destination->attributeLabels();
 ?>
-<?php Pjax::begin(['id' => 'pjax-import-form', 'formSelector' => false]); ?>
+<?php Pjax::begin(['id' => 'pjax-import-form', 'formSelector' => false, 'timeout' => false]); ?>
 <?php $form = ActiveForm::begin(['id' => uniqid('import-'), 'action' => ['import'], 'options' => ['data-pjax' => '#pjax-import-form']]); ?>
-<div class="overlay"><div class="glyphicon glyphicon-refresh animate-spin"></div></div>
 <div class="box-body">
     All the rows from the uploaded file will be added to the database.<br />
     The file must have a unique ID from the database to update the existing records.<br /><br />
@@ -106,7 +105,7 @@ $_labels = $destination->hasMethod('importLabels') ? $destination->importLabels(
 </div>
 
 <div class="box-footer text-right">
-	<?= Html::submitButton('<i class="glyphicon glyphicon-import"></i> '.Yii::t('app', 'Import'), ['class' => 'btn btn-success pjax-submit btn-loading', 'data' => [/*'loading-timeout' => 5000, */'loading-container' => '#pjax-import-form']]) ?>
+	<?= Html::submitButton('<i class="glyphicon glyphicon-import"></i> '.Yii::t('app', 'Import'), ['class' => 'btn btn-success pjax-submit']) ?>
 	<?= Yii::$app->request->isAjax || $isModal ? Html::button(Yii::t('app', 'Close'), ['class' => 'btn btn-default', 'data-dismiss' => 'modal']) : '' ?>
 </div>
 

@@ -1,0 +1,11 @@
+.sortable-widget-handler {
+	cursor: ns-resize;
+	cursor: -webkit-ns-resize;
+	cursor: -moz-webkit-ns-resize;
+}
+.sortable-widget-disabled {
+	color: #d2d6de;
+}
+.sortable-widget-active {
+	color: #3c8dbc;
+}

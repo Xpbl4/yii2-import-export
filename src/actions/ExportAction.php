@@ -15,7 +15,7 @@ use yii\base\InvalidConfigException;
 use yii\web\UploadedFile;
 
 /**
- * ImportAction
+ * ExportAction
  *
  * Usage:
  *
@@ -24,7 +24,7 @@ use yii\web\UploadedFile;
  * {
  *     return [
  *         'import' => [
- *             'class' => 'xpbl4\import\actions\ImportAction',
+ *             'class' => 'xpbl4\import\actions\ExportAction',
  * 		       'model' => Post::class
  *         ]
  *     ];
@@ -35,7 +35,7 @@ use yii\web\UploadedFile;
  *
  * @link https://github.com/xpbl4/yii2-import-export
  */
-class ImportAction extends \yii\base\Action
+class ExportAction extends \yii\base\Action
 {
 	/**
 	 * @var \yii\db\ActiveRecord model class name
@@ -45,7 +45,7 @@ class ImportAction extends \yii\base\Action
 	/**
 	 * @var \yii\base\Model form class name
 	 */
-	public $form = '\xpbl4\import\models\ImportForm';
+	public $form = '\xpbl4\import\models\ExportForm';
 
     /**
      * @var string Path to directory where files will be uploaded.
@@ -69,7 +69,7 @@ class ImportAction extends \yii\base\Action
             throw new InvalidConfigException('The "model" attribute must be set.');
 
         if ($this->path === null)
-			$this->path = \Yii::getAlias('@runtime/import');
+			$this->path = \Yii::getAlias('@runtime/export');
 
 		if ($this->redirect === null)
 			$this->redirect = ['index'];
@@ -85,10 +85,10 @@ class ImportAction extends \yii\base\Action
     {
 	    ini_set('max_execution_time', 60);
 
-	    $_result = Yii::$app->session->getFlash('import-result', ['limit' => 100, 'offset' => 0]);
+	    $_result = Yii::$app->session->getFlash('export-result', ['limit' => -1, 'offset' => 0]);
 	    $model = new $this->model;
 
-		/** @var \xpbl4\import\models\ImportForm $form */
+		/** @var \xpbl4\import\models\ExportForm $form */
 	    $form = new $this->form;
 	    $form->setAttributes($_result);
 	    $form->_time['start'] = microtime(true);
@@ -138,8 +138,8 @@ class ImportAction extends \yii\base\Action
 	    }
 
 	    if (Yii::$app->request->isAjax || Yii::$app->request->isPjax)
-		    return $this->controller->renderAjax('@xpbl4/import/views/import', ['model' => $form, 'destination' => $model]);
+		    return $this->controller->renderAjax('@xpbl4/import/views/export', ['model' => $form, 'source' => $model]);
 
-	    return $this->controller->render('@xpbl4/import/views/import', ['model' => $form, 'destination' => $model]);
+	    return $this->controller->render('@xpbl4/import/views/export', ['model' => $form, 'source' => $model]);
 	}
 }
