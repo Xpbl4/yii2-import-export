@@ -17,7 +17,7 @@ use yii\widgets\Pjax;
 
 $_labels = $source->attributeLabels();
 $exportJS = <<<JS
-	$(".table-checked").exportcolumns();
+	$(".table-checked").selectRows();
 	$(".table-sorted tbody").sortableWidget({
 		'handle': '.sortable-widget-handler',
 		'animation': 300
